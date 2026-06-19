@@ -1,4 +1,4 @@
-# RPG Maker MV 傷害公式分析儀 (RM-like Style)
+# rmmv-formula-visualizer
 
 一個提供給數值策劃的獨立傷害公式調試與趨勢交叉矩陣工具。採用經典的 RPG Maker MV 視窗與對話框風格。
 
