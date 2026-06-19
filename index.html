@@ -13,7 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     
     <!-- 引入本地樣式 -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
     <div class="card">
         <div class="card-title">傷害公式配置</div>
         <div class="form-group">
-            <label for="formulaInput">JavaScript 傷害公式 (Formula)</label>
+            <label for="formulaInput">公式 (Formula)</label>
             <div class="editor-container">
                 <!-- 透明 Textarea 與 疊加語法高亮層 -->
                 <textarea id="formulaInput" class="editor-textarea" spellcheck="false">item.successRate * (1 - b.hp / b.mhp) * (5 / Math.max(5, b.level - a.level)) ** 6</textarea>
@@ -67,6 +67,7 @@
                 <span class="result-value" id="resultValue">0</span>
             </div>
             <div class="result-sub" id="resultRange">傷害浮動區間: 0 ~ 0</div>
+            <div class="next-arrow">▼</div>
         </div>
     </div>
     
@@ -80,8 +81,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 
 <!-- 載入本地腳本 -->
-<script src="rmmv-sim.js"></script>
-<script src="app.js"></script>
+<script src="src/rmmv-sim.js"></script>
+<script src="src/app.js"></script>
 
 </body>
 </html>
