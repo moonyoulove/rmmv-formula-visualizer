@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Maker MV 傷害公式分析儀</title>
+    <!-- 引入現代字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Prism.js 語法高亮主題 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- 引入本地樣式 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>⚔️ RMMV 傷害公式分析儀</h1>
+    </header>
+    
+    <!-- 公式輸入卡片 -->
+    <div class="card">
+        <div class="card-title">傷害公式配置</div>
+        <div class="form-group">
+            <label for="formulaInput">JavaScript 傷害公式 (Formula)</label>
+            <div class="editor-container">
+                <!-- 透明 Textarea 與 疊加語法高亮層 -->
+                <textarea id="formulaInput" class="editor-textarea" spellcheck="false">item.successRate * (1 - b.hp / b.mhp) * (5 / Math.max(5, b.level - a.level)) ** 6</textarea>
+                <pre class="editor-highlight language-javascript"><code id="highlightArea"></code></pre>
+            </div>
+            <div id="errorMsg" class="error-msg"></div>
+        </div>
+        
+        <div class="config-row">
+            <div class="config-item">
+                <label style="margin-bottom:0;" for="varianceInput">變化 (Variance)</label>
+                <input type="number" id="varianceInput" value="20" min="0" max="100">
+                <span>%</span>
+            </div>
+            
+            <label class="checkbox-container config-item" style="margin-bottom:0;">
+                <input type="checkbox" id="criticalCheck">
+                <div class="checkbox-custom"></div>
+                <span>暴擊 (Critical 3.0x)</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- 雙欄控制與輸出 -->
+    <div class="grid">
+        <!-- 左側：公式變數動態控制 -->
+        <div class="card" style="margin-bottom: 0;">
+            <div class="card-title">🎛️ 公式變數動態控制</div>
+            <div id="dynamicControls" class="control-list">
+                <!-- 動態生成控制項 -->
+            </div>
+        </div>
+
+        <!-- 右側：預期傷害值 -->
+        <div class="result-card">
+            <div class="result-title">預期傷害值</div>
+            <div class="result-value-container">
+                <span class="result-value" id="resultValue">0</span>
+            </div>
+            <div class="result-sub" id="resultRange">傷害浮動區間: 0 ~ 0</div>
+        </div>
+    </div>
+    
+    <footer>
+        <span>Created by Gemini</span>
+    </footer>
+</div>
+
+<!-- 載入 Prism.js 核心與 JS 語言擴展 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+<!-- 載入本地腳本 -->
+<script src="rmmv-sim.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
