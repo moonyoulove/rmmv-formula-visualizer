@@ -13,19 +13,22 @@ const defaultItemParam = {
     speed: 0
 };
 
-// 虛擬戰鬥員類別，模擬 RMMV 的屬性與方法
+// Worker 執行代碼 (包含獨立沙盒環境)
+const workerCode = `
+const defaultBattlerParam = {
+    mhp: 1000, mmp: 100, atk: 100, def: 50, mat: 100, mdf: 50, agi: 50, luk: 50, hp: 1000, mp: 100, tp: 0, level: 1
+};
+
 class VirtualBattler {
     constructor(subject, varContext) {
-        // 載入預設基本屬性
         Object.assign(this, defaultBattlerParam);
         
         this._subject = subject; // 'a' 或 'b'
         this._varContext = varContext;
 
-        // 遞迴映射變數快照中設定的所有多級屬性鏈 (hp, mp 等，並同時映射帶底線的私有變數以防萬一)
         Object.keys(varContext).forEach(key => {
-            if (key.startsWith(`${subject}.`)) {
-                const path = key.split('.'); // ['a', 'atk']
+            if (key.startsWith(subject + '.')) {
+                const path = key.split('.');
                 let obj = this;
                 for (let i = 1; i < path.length - 1; i++) {
                     const part = path[i];
@@ -35,64 +38,59 @@ class VirtualBattler {
                 const leaf = path[path.length - 1];
                 const val = varContext[key].value;
                 obj[leaf] = val;
-                
-                // 同時設定底線私有屬性，如 _hp
-                obj[`_${leaf}`] = val;
+                obj['_' + leaf] = val;
             }
         });
         
-        // 確保基本屬性即使沒被公式用到，私有屬性也同步存在
         Object.keys(defaultBattlerParam).forEach(param => {
             if (this[param] !== undefined) {
-                this[`_${param}`] = this[param];
+                this['_' + param] = this[param];
             }
         });
     }
 
-    // 比例方法模擬 (RMMV 常用)
     hpRate() { return this.mhp > 0 ? this.hp / this.mhp : 0; }
     mpRate() { return this.mmp > 0 ? this.mp / this.mmp : 0; }
-    tpRate() { return this.tp / 100; } // maxTp 預設為 100
+    tpRate() { return this.tp / 100; }
 
-    // 是否受特定狀態影響
     isStateAffected(stateId) {
-        const key = `${this._subject}.isStateAffected(${stateId})`;
+        const key = this._subject + '.isStateAffected(' + stateId + ')';
         return this._varContext[key] !== undefined ? !!this._varContext[key].value : false;
     }
     
-    isDead() { return this.isStateAffected(1); } // 死亡狀態為 1
+    isDead() { return this.isStateAffected(1); }
     isAlive() { return !this.isDead(); }
 
-    // 屬性有效度模擬
     elementRate(elementId) {
-        const key = `${this._subject}.elementRate(${elementId})`;
+        const key = this._subject + '.elementRate(' + elementId + ')';
         const val = this._varContext[key] !== undefined ? this._varContext[key].value : 100;
         return val / 100;
     }
 
-    // 弱化有效度模擬
     debuffRate(paramId) {
-        const key = `${this._subject}.debuffRate(${paramId})`;
+        const key = this._subject + '.debuffRate(' + paramId + ')';
         const val = this._varContext[key] !== undefined ? this._varContext[key].value : 100;
         return val / 100;
     }
 
-    // 狀態有效度模擬
     stateRate(stateId) {
-        const key = `${this._subject}.stateRate(${stateId})`;
+        const key = this._subject + '.stateRate(' + stateId + ')';
         const val = this._varContext[key] !== undefined ? this._varContext[key].value : 100;
         return val / 100;
     }
 }
 
-// 核心計算：還原 RMMV 的 Game_Action.prototype.evalDamageFormula
 function evalFormulaWithContext(formula, varContext, isCritical = false, variance = 0) {
-    // 建立虛擬的 a, b 物件
     const a = new VirtualBattler('a', varContext);
     const b = new VirtualBattler('b', varContext);
-    const v = {};
     
-    // 建立虛擬的 item 物件
+    // 使用 Proxy 來包裝 v，當讀取不存在的屬性時回傳 0，符合 RMMV 預設值
+    const v = new Proxy({}, {
+        get: (target, name) => {
+            return name in target ? target[name] : 0;
+        }
+    });
+    
     const item = {
         damage: {
             critical: isCritical,
@@ -108,10 +106,9 @@ function evalFormulaWithContext(formula, varContext, isCritical = false, varianc
         speed: 0
     };
 
-    // 遞迴映射變數快照中以 item. 開頭的屬性鏈
     Object.keys(varContext).forEach(key => {
         if (key.startsWith('item.')) {
-            const path = key.split('.'); // ['item', 'damage', 'elementId'] 或 ['item', 'mpCost']
+            const path = key.split('.');
             let obj = item;
             for (let i = 1; i < path.length - 1; i++) {
                 const part = path[i];
@@ -127,17 +124,51 @@ function evalFormulaWithContext(formula, varContext, isCritical = false, varianc
         }
     });
 
-    // 模擬核心腳本中的 $gameVariables.value(id)
-    const $gameVariables = {
-        value: function(id) { return v[id] || 0; }
-    };
-
     try {
-        // 還原 RMMV 的執行環境
-        const f = new Function('a', 'b', 'v', 'item', '$gameVariables', `return ${formula};`);
-        const baseResult = f(a, b, v, item, $gameVariables);
+        // 移除 $gameVariables 參數，改用精簡的 v
+        const f = new Function('a', 'b', 'v', 'item', 'return ' + formula + ';');
+        const baseResult = f(a, b, v, item);
         return isNaN(baseResult) ? 0 : Math.max(baseResult, 0);
     } catch (e) {
         throw e;
     }
+}
+
+self.onmessage = function(e) {
+    const { reqId, formula, varContext, isCritical, variance } = e.data;
+    try {
+        const result = evalFormulaWithContext(formula, varContext, isCritical, variance);
+        self.postMessage({ reqId, success: true, result });
+    } catch (err) {
+        self.postMessage({ reqId, success: false, error: err.message });
+    }
+};
+`;
+
+// 使用 Blob URL 初始化 Web Worker 以防止本地 CORS 安全錯誤
+const blob = new Blob([workerCode], { type: 'application/javascript' });
+const worker = new Worker(URL.createObjectURL(blob));
+
+let currentReqId = 0;
+const pendingPromises = {};
+
+worker.onmessage = function(e) {
+    const { reqId, success, result, error } = e.data;
+    if (pendingPromises[reqId]) {
+        if (success) {
+            pendingPromises[reqId].resolve(result);
+        } else {
+            pendingPromises[reqId].reject(new Error(error));
+        }
+        delete pendingPromises[reqId];
+    }
+};
+
+// 異步公式執行介面
+function evalFormulaWithContextAsync(formula, varContext, isCritical = false, variance = 0) {
+    return new Promise((resolve, reject) => {
+        const reqId = ++currentReqId;
+        pendingPromises[reqId] = { resolve, reject };
+        worker.postMessage({ reqId, formula, varContext, isCritical, variance });
+    });
 }

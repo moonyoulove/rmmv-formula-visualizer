@@ -1,5 +1,6 @@
 // 儲存當前被解析出來的變數狀態
 let activeVariables = {};
+let latestCalcId = 0;
 
 // 初始化：解析公式並綁定事件
 const formulaInput = document.getElementById('formulaInput');
@@ -224,36 +225,44 @@ function calculateDamage() {
     const formula = formulaInput.value;
     if (!formula.trim()) return;
 
-    try {
-        const variance = parseFloat(varianceInput.value) || 0;
-        const isCritical = criticalCheck.checked;
-        
-        // 呼叫 rmmv-sim.js 解耦後的函式
-        const baseDamage = evalFormulaWithContext(formula, activeVariables, isCritical, variance);
+    const variance = parseFloat(varianceInput.value) || 0;
+    const isCritical = criticalCheck.checked;
+    
+    const calcId = ++latestCalcId;
 
-        // 計算暴擊 (還原 Game_Action.prototype.applyCritical)
-        const critDamage = isCritical ? baseDamage * 3 : baseDamage;
+    evalFormulaWithContextAsync(formula, activeVariables, isCritical, variance)
+        .then(baseDamage => {
+            if (calcId !== latestCalcId) return;
 
-        // 計算分散度浮動 (還原 Game_Action.prototype.applyVariance)
-        const amp = Math.floor(Math.max(Math.abs(critDamage) * variance / 100, 0));
-        const minDamage = Math.max(Math.round(critDamage - amp), 0);
-        const maxDamage = Math.max(Math.round(critDamage + amp), 0);
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+            }
 
-        // 更新 UI (使用分開的 resultValue 與 resultRange，避免 innerHTML 覆蓋造成的 DOM 銷毀問題)
-        const resultValue = document.getElementById('resultValue');
-        if (resultValue) {
-            resultValue.innerText = Math.round(critDamage);
-        }
-        const resultRange = document.getElementById('resultRange');
-        if (resultRange) {
-            resultRange.innerText = `傷害浮動區間 (${variance}%): ${minDamage} ~ ${maxDamage}`;
-        }
-    } catch (err) {
-        if (errorMsg) {
-            errorMsg.innerText = `公式語法錯誤: ${err.message}`;
-            errorMsg.style.display = 'block';
-        }
-    }
+            // 計算暴擊 (還原 Game_Action.prototype.applyCritical)
+            const critDamage = isCritical ? baseDamage * 3 : baseDamage;
+
+            // 計算分散度浮動 (還原 Game_Action.prototype.applyVariance)
+            const amp = Math.floor(Math.max(Math.abs(critDamage) * variance / 100, 0));
+            const minDamage = Math.max(Math.round(critDamage - amp), 0);
+            const maxDamage = Math.max(Math.round(critDamage + amp), 0);
+
+            // 更新 UI (使用分開的 resultValue 與 resultRange，避免 innerHTML 覆蓋造成的 DOM 銷毀問題)
+            const resultValue = document.getElementById('resultValue');
+            if (resultValue) {
+                resultValue.innerText = Math.round(critDamage);
+            }
+            const resultRange = document.getElementById('resultRange');
+            if (resultRange) {
+                resultRange.innerText = `傷害浮動區間 (${variance}%): ${minDamage} ~ ${maxDamage}`;
+            }
+        })
+        .catch(err => {
+            if (calcId !== latestCalcId) return;
+            if (errorMsg) {
+                errorMsg.innerText = `公式語法錯誤: ${err.message}`;
+                errorMsg.style.display = 'block';
+            }
+        });
 }
 
 // 事件接聽設定
