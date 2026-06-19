@@ -1,0 +1,559 @@
+:root {
+    /* RPG Maker 經典藍色調視窗變數 (調淺半透明度) */
+    --rm-window-bg: linear-gradient(180deg, rgba(16, 36, 80, 0.6) 0%, rgba(8, 18, 40, 0.7) 100%);
+    --rm-window-border: #ffffff;
+    --rm-border-shadow: #000000;
+    
+    /* 現代 Vercel / RM 融合變數 */
+    --bg-main: #141c10;       /* 預設暗綠色 background-color */
+    --bg-input: rgba(0, 0, 0, 0.5);
+    
+    --text-primary: #ffffff;  
+    --text-secondary: #e0e0e0;
+    --text-muted: #888888;
+    
+    /* RPG Maker 經典文字調色盤 */
+    --color-brand: #f8d058;     /* 經典黃色字體 */
+    --color-critical: #f43f5e;  /* 暴擊紅色 */
+    --color-success: #40c080;   /* 回復/數值綠色 */
+    --color-error: #ef4444;     
+}
+
+body {
+    font-family: 'JetBrains Mono', -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* 像素風草地背景 */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-image: url('assets/tileset.png');
+    background-repeat: repeat;
+    background-size: 96px 96px; /* 放大平鋪 */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* 背景暗化遮罩，增加資訊可讀性 */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.25); /* 稍微壓暗背景 */
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* 標頭設計 */
+header {
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 
+        2px 2px 0px #000000,
+        -1px -1px 0px #000000,
+        1px -1px 0px #000000,
+        -1px 1px 0px #000000;
+}
+
+/* 卡片設計 */
+.card {
+    background: var(--rm-window-bg);
+    border: 2px solid var(--rm-window-border);
+    border-radius: 4px; /* 經典小圓角 */
+    padding: 24px;
+    box-shadow: 
+        0 0 0 2px var(--rm-border-shadow), 
+        inset 0 0 0 1px var(--rm-border-shadow),
+        0 10px 25px rgba(0, 0, 0, 0.6);
+    margin-bottom: 24px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    box-shadow: 
+        0 0 0 2px var(--rm-border-shadow), 
+        inset 0 0 0 1px var(--rm-border-shadow),
+        0 12px 30px rgba(0, 0, 0, 0.7);
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 18px;
+    color: var(--color-brand); /* 黃色標題 */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* 輸入控制項 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    text-shadow: 1px 1px 0px #000;
+}
+
+/* 語法高亮編輯器容器 */
+.editor-container {
+    position: relative;
+    width: 100%;
+    height: 52px;
+    background-color: var(--bg-input);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    transition: border-color 0.15s ease;
+    overflow: hidden;
+}
+
+.editor-container:focus-within {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 1px var(--color-brand);
+}
+
+.editor-textarea, .editor-highlight {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* 語法高亮與 textarea 精確對齊樣式 */
+.editor-textarea,
+.editor-highlight,
+.editor-highlight code {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+}
+
+.editor-textarea {
+    padding: 14px 16px;
+    color: transparent;
+    caret-color: var(--text-primary);
+    resize: none;
+    z-index: 2;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.editor-textarea::-webkit-scrollbar {
+    display: none; /* Webkit */
+}
+
+.editor-highlight {
+    padding: 14px 16px !important; /* 確保與 textarea 內距完全對齊 */
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    background: transparent !important;
+    border: none !important;
+}
+
+.editor-highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    display: block;
+    text-shadow: none !important;
+}
+
+pre[class*="language-"] {
+    margin: 0 !important;
+    background: none !important;
+}
+
+.error-msg {
+    color: var(--color-error);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-top: 8px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: none;
+}
+
+/* 工具列配置 */
+.config-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.config-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-shadow: 1px 1px 0 #000;
+}
+
+.config-item input[type="number"] {
+    width: 60px;
+    padding: 6px 8px;
+    background-color: var(--bg-input);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    text-shadow: 1px 1px 0 #000;
+    transition: border-color 0.15s ease;
+}
+
+.config-item input[type="number"]:focus {
+    border-color: var(--color-brand);
+    outline: none;
+}
+
+/* Checkbox 樣式優化 */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-container input {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 4px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    background-color: var(--bg-input);
+    box-shadow: 0 0 0 1px #000;
+    box-sizing: border-box;
+}
+
+.checkbox-container:hover .checkbox-custom {
+    border-color: var(--color-brand);
+}
+
+.checkbox-container input:checked + .checkbox-custom {
+    background-color: rgba(248, 208, 88, 0.15);
+    border-color: var(--color-brand);
+}
+
+.checkbox-container input:checked + .checkbox-custom::after {
+    content: "✔";
+    color: var(--color-brand);
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: none;
+}
+
+/* 雙欄佈局 */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 變數控制面板：採用 Grid 雙排佈局 */
+.control-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .control-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.control-group {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 12px 16px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.control-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 1px 1px 0 #000;
+}
+
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Slider 樣式優化 */
+input[type="range"] {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 18px;
+    border-radius: 2px;
+    background: #ffffff;
+    border: 1.5px solid #000000;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background-color: var(--color-brand);
+    transform: scaleY(1.1);
+}
+
+.value-box {
+    width: 76px;               /* 微調寬度以留出空間給微調按鈕 */
+    text-align: center;        /* 改為置中對齊，數值與微調箭頭保持良好視覺距離 */
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    background-color: var(--bg-input);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 6px 4px;
+    box-sizing: border-box;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.value-box:focus {
+    border-color: var(--color-brand);
+    outline: none;
+}
+
+/* 結果顯示面板 */
+.result-card {
+    background: radial-gradient(circle at top right, rgba(248, 208, 88, 0.1), transparent 70%), var(--rm-window-bg);
+    border: 2px solid var(--rm-window-border);
+    border-radius: 4px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 
+        0 0 0 2px var(--rm-border-shadow), 
+        inset 0 0 0 1px var(--rm-border-shadow),
+        0 10px 25px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.result-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.result-value-container {
+    margin: 8px 0;
+}
+
+.result-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-shadow: 
+        3px 3px 0px #000000,
+        -1px -1px 0px #000000,
+        1px -1px 0px #000000,
+        -1px 1px 0px #000000;
+}
+
+.result-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* 對話框翻頁小箭頭 */
+.next-arrow {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--text-primary);
+    animation: rmmvArrowBlink 1s infinite steps(2, start);
+    text-shadow: 1px 1px 0 #000;
+    pointer-events: none;
+}
+
+@keyframes rmmvArrowBlink {
+    0%, 100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(3px);
+    }
+}
+
+/* 快捷微調按鈕樣式 */
+.quick-adjust-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.btn-adjust {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    user-select: none;
+    text-shadow: 1px 1px 0 #000;
+    box-shadow: 0 0 0 1px #000;
+}
+
+.btn-adjust:hover {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+    background-color: rgba(248, 208, 88, 0.1);
+}
+
+.btn-adjust:active {
+    transform: scale(0.95);
+}
+
+/* 頁尾樣式 */
+footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', sans-serif;
+    letter-spacing: 0.02em;
+    text-shadow: 1px 1px 0 #000;
+}
