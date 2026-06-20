@@ -1,21 +1,21 @@
 :root {
-    /* RPG Maker 經典藍色調視窗變數 (調淺半透明度) */
+    /* RPG Maker classic blue window variables (opacity reduced) */
     --rm-window-bg: linear-gradient(180deg, rgba(16, 36, 80, 0.6) 0%, rgba(8, 18, 40, 0.7) 100%);
     --rm-window-border: #ffffff;
     --rm-border-shadow: #000000;
     
-    /* 現代 Vercel / RM 融合變數 */
-    --bg-main: #141c10;       /* 預設暗綠色 background-color */
+    /* Modern Vercel / RPG Maker hybrid variables */
+    --bg-main: #141c10;       /* Default dark green background-color */
     --bg-input: rgba(0, 0, 0, 0.5);
     
     --text-primary: #ffffff;  
     --text-secondary: #e0e0e0;
     --text-muted: #a0a0a0;
     
-    /* RPG Maker 經典文字調色盤 */
-    --color-brand: #f8d058;     /* 經典黃色字體 */
-    --color-critical: #f43f5e;  /* 暴擊紅色 */
-    --color-success: #40c080;   /* 回復/數值綠色 */
+    /* RPG Maker classic text palette */
+    --color-brand: #f8d058;     /* Classic yellow font */
+    --color-critical: #f43f5e;  /* Critical red */
+    --color-success: #40c080;   /* Recovery / numeric green */
     --color-error: #ef4444;     
 }
 
@@ -30,7 +30,7 @@ body {
     min-height: 100vh;
 }
 
-/* 像素風草地背景 */
+/* Pixel art grass background */
 body::before {
     content: "";
     position: fixed;
@@ -41,12 +41,12 @@ body::before {
     z-index: -2;
     background-image: url('assets/tileset.png');
     background-repeat: repeat;
-    background-size: 96px 96px; /* 放大平鋪 */
+    background-size: 96px 96px; /* Scale up and tile */
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
 
-/* 背景暗化遮罩，增加資訊可讀性 */
+/* Background dimming mask to improve readability */
 body::after {
     content: "";
     position: fixed;
@@ -55,7 +55,7 @@ body::after {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: rgba(0, 0, 0, 0.25); /* 稍微壓暗背景 */
+    background: rgba(0, 0, 0, 0.25); /* Dim the background slightly */
     pointer-events: none;
 }
 
@@ -64,7 +64,7 @@ body::after {
     margin: 0 auto;
 }
 
-/* 標頭設計 */
+/* Header design */
 header {
     margin-bottom: 32px;
     display: flex;
@@ -88,11 +88,11 @@ h1 {
         -1px 1px 0px #000000;
 }
 
-/* 卡片設計 */
+/* Card design */
 .card {
     background: var(--rm-window-bg);
     border: 2px solid var(--rm-window-border);
-    border-radius: 4px; /* 經典小圓角 */
+    border-radius: 4px; /* Classic small rounded corners */
     padding: 24px;
     box-shadow: 
         0 0 0 2px var(--rm-border-shadow), 
@@ -114,15 +114,15 @@ h1 {
 .card-title {
     font-size: 16px;
     font-weight: 700;
-    margin: 0 0 18px 0; /* 重設 margin */
-    color: var(--color-brand); /* 黃色標題 */
+    margin: 0 0 18px 0; /* Reset margin */
+    color: var(--color-brand); /* Yellow title */
     display: flex;
     align-items: center;
     gap: 8px;
     text-shadow: 1px 1px 0 #000;
 }
 
-/* 輸入控制項 */
+/* Input controls */
 .form-group {
     margin-bottom: 20px;
 }
@@ -140,7 +140,7 @@ label {
     text-shadow: 1px 1px 0px #000;
 }
 
-/* 語法高亮編輯器容器 */
+/* Syntax highlighting editor container */
 .editor-container {
     position: relative;
     width: 100%;
@@ -171,7 +171,7 @@ label {
     left: 0;
 }
 
-/* 語法高亮與 textarea 精確對齊樣式 */
+/* Exact alignment styles for syntax highlighting and textarea */
 .editor-textarea,
 .editor-highlight,
 .editor-highlight code {
@@ -198,7 +198,7 @@ label {
 }
 
 .editor-highlight {
-    padding: 14px 16px !important; /* 確保與 textarea 內距完全對齊 */
+    padding: 14px 16px !important; /* Ensure exact alignment with textarea padding */
     z-index: 1;
     pointer-events: none;
     overflow: hidden;
@@ -231,7 +231,7 @@ pre[class*="language-"] {
     display: none;
 }
 
-/* 工具列配置 */
+/* Configuration toolbar */
 .config-row {
     display: flex;
     align-items: center;
@@ -269,7 +269,7 @@ pre[class*="language-"] {
     box-shadow: 0 0 0 2px var(--color-brand);
 }
 
-/* Checkbox 樣式優化 */
+/* Checkbox style optimization */
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -326,7 +326,7 @@ pre[class*="language-"] {
     text-shadow: none;
 }
 
-/* 雙欄佈局 */
+/* Two-column layout */
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -339,7 +339,7 @@ pre[class*="language-"] {
     }
 }
 
-/* 變數控制面板：採用 Grid 雙排佈局 */
+/* Variable control panel: Grid double-row layout */
 .control-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -385,7 +385,7 @@ pre[class*="language-"] {
     width: 100%;
 }
 
-/* Slider 樣式優化 */
+/* Slider style optimization */
 input[type="range"] {
     flex: 1;
     height: 6px;
@@ -426,8 +426,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .value-box {
-    width: 76px;               /* 微調寬度以留出空間給微調按鈕 */
-    text-align: center;        /* 改為置中對齊，數值與微調箭頭保持良好視覺距離 */
+    width: 76px;               /* Fine-tune width to leave space for adjust buttons */
+    text-align: center;        /* Center aligned to maintain good visual distance between value and adjustment arrows */
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     font-weight: 600;
@@ -446,7 +446,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     box-shadow: 0 0 0 2px var(--color-brand);
 }
 
-/* 結果顯示面板 */
+/* Result display card */
 .result-card {
     background: radial-gradient(circle at top right, rgba(248, 208, 88, 0.1), transparent 70%), var(--rm-window-bg);
     border: 2px solid var(--rm-window-border);
@@ -470,7 +470,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .result-title {
     font-size: 14px;
     font-weight: 700;
-    margin: 0 0 8px 0; /* 重設 margin */
+    margin: 0 0 8px 0; /* Reset margin */
     color: var(--color-brand);
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -507,7 +507,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     text-shadow: 1px 1px 0 #000;
 }
 
-/* 對話框翻頁小箭頭 */
+/* Dialog page-turning small arrow */
 .next-arrow {
     position: absolute;
     bottom: 8px;
@@ -531,7 +531,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     }
 }
 
-/* 快捷微調按鈕樣式 */
+/* Quick adjustment button style */
 .quick-adjust-row {
     display: flex;
     gap: 6px;
@@ -571,7 +571,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     transform: scale(0.95);
 }
 
-/* 語言選擇器樣式 */
+/* Language selector style */
 .lang-selector-container {
     display: flex;
     align-items: center;
@@ -618,7 +618,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     color: var(--text-primary);
 }
 
-/* 頁尾樣式 */
+/* Footer style */
 footer {
     margin-top: 48px;
     padding-top: 24px;

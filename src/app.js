@@ -1,4 +1,4 @@
-// 儲存當前被解析出來的變數狀態
+// Stores the currently parsed variable states
 let activeVariables = {};
 let latestCalcId = 0;
 
@@ -10,14 +10,14 @@ const criticalCheck = document.getElementById('criticalCheck');
 const dynamicControls = document.getElementById('dynamicControls');
 const errorMsg = document.getElementById('errorMsg');
 
-// 同步滾動
+// Synchronize scrolling
 formulaInput.addEventListener('scroll', () => {
     const highlightPre = highlightArea.parentElement;
     highlightPre.scrollTop = formulaInput.scrollTop;
     highlightPre.scrollLeft = formulaInput.scrollLeft;
 });
 
-// 即時更新語法高亮
+// Real-time update syntax highlighting
 function updateHighlight() {
     let text = formulaInput.value;
     if (text[text.length - 1] === "\n") {
@@ -31,20 +31,20 @@ function parseFormula() {
     const formula = formulaInput.value;
     errorMsg.style.display = 'none';
     
-    // 正則表達式捕捉
-    // 1. 普通屬性（支援多級屬性鏈，如 a.atk, item.mpCost, item.damage.elementId）
-    // 負向先行斷言 (?!\) 避免將 a.elementRate 識別為普通屬性
+    // Regex pattern capture
+    // 1. Normal parameters (supports multi-level property chains, e.g., a.atk, item.mpCost, item.damage.elementId)
+    // Negative lookahead assertion (?!\() avoids treating a.elementRate as a normal parameter
     const normalParamMatches = [...formula.matchAll(/\b([ab]|item)\.([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\b(?!\()/g)];
     
-    // 2. 特殊方法：elementRate(id), debuffRate(id), stateRate(id), isStateAffected(id)
+    // 2. Special methods: elementRate(id), debuffRate(id), stateRate(id), isStateAffected(id)
     const methodMatches = [...formula.matchAll(/\b([ab])\.(elementRate|debuffRate|stateRate|isStateAffected)\((\d+)\)/g)];
     
-    // 3. 遊戲變數 v[id]
+    // 3. Game variables v[id]
     const gameVarMatches = [...formula.matchAll(/\bv\[(\d+)\]/g)];
 
     let newVars = {};
 
-    // 1. 處理普通屬性
+    // 1. Handle normal parameters
     normalParamMatches.forEach(match => {
         const subject = match[1]; // 'a', 'b', 或 'item'
         const paramPath = match[2]; // 'atk', 'damage.elementId' 等
@@ -53,7 +53,7 @@ function parseFormula() {
         let defaultVal = 10;
         
         if (subject === 'item') {
-            // 讀取技能/道具預設值
+            // Read default values for skills/items
             if (paramPath.startsWith('damage.')) {
                 defaultVal = 0;
             } else {
@@ -67,12 +67,12 @@ function parseFormula() {
             type: 'param', 
             subject: subject, 
             paramName: paramPath, 
-            label: key, // 原生變數名直接作為 label，不翻譯
+            label: key, // Raw variable name is used directly as the label, not translated
             value: activeVariables[key]?.value ?? defaultVal 
         };
     });
 
-    // 2. 處理特殊方法
+    // 2. Handle special methods
     methodMatches.forEach(match => {
         const subject = match[1];      // 'a' 或 'b'
         const methodName = match[2];   // 'elementRate', 'debuffRate' 等
@@ -92,13 +92,13 @@ function parseFormula() {
             subject: subject,
             methodName: methodName,
             id: id,
-            label: key, // 原生變數名直接作為 label，不翻譯
+            label: key, // Raw variable name is used directly as the label, not translated
             valueType: valueType,
             value: activeVariables[key]?.value ?? defaultValue
         };
     });
 
-    // 3. 處理遊戲變數 v[x]
+    // 3. Handle game variables v[x]
     gameVarMatches.forEach(match => {
         const id = match[1];
         const key = `v[${id}]`;
@@ -110,14 +110,14 @@ function parseFormula() {
         };
     });
 
-    // 重新繪製控制元件
+    // Redraw control elements
     renderControls(newVars);
     activeVariables = newVars;
     calculateDamage();
 }
 
 function renderControls(variables) {
-    // 檢查是否有新的變數需要更新，避免每次打字都重新整理造成 Slider 被中斷
+    // Check if new variables need updates to avoid rebuilding and disrupting sliders during typing
     const currentKeys = Object.keys(variables).sort().join(',');
     const activeKeys = Object.keys(activeVariables).sort().join(',');
     
@@ -142,7 +142,7 @@ function renderControls(variables) {
         group.className = 'control-group';
         
         if (v.type === 'method' && v.valueType === 'boolean') {
-            // 布林類型 (例如 isStateAffected)，渲染成 Checkbox
+            // Boolean type (e.g., isStateAffected), rendered as a Checkbox
             group.innerHTML = `
                 <div class="slider-row" style="padding: 4px 0;">
                     <label class="checkbox-container" style="margin-bottom:0; width: 100%;">
@@ -160,7 +160,7 @@ function renderControls(variables) {
                 calculateDamage();
             });
         } else {
-            // 數值類型，渲染成 Slider + Number Box
+            // Numeric type, rendered as Slider + Number Box
             if (v.type === 'param') {
                 const name = v.paramName.toLowerCase();
                 if (name.includes('successrate') || name.includes('variance')) {
@@ -241,15 +241,15 @@ function calculateDamage() {
                 errorMsg.style.display = 'none';
             }
 
-            // 計算暴擊 (還原 Game_Action.prototype.applyCritical)
+            // Calculate critical damage (restore Game_Action.prototype.applyCritical)
             const critDamage = isCritical ? baseDamage * 3 : baseDamage;
 
-            // 計算分散度浮動 (還原 Game_Action.prototype.applyVariance)
+            // Calculate variance float (restore Game_Action.prototype.applyVariance)
             const amp = Math.floor(Math.max(Math.abs(critDamage) * variance / 100, 0));
             const minDamage = Math.max(Math.round(critDamage - amp), 0);
             const maxDamage = Math.max(Math.round(critDamage + amp), 0);
 
-            // 更新 UI (使用分開的 resultValue 與 resultRange，避免 innerHTML 覆蓋造成的 DOM 銷毀問題)
+            // Update UI (use separate resultValue and resultRange to avoid DOM destruction caused by innerHTML overwriting)
             const resultValue = document.getElementById('resultValue');
             if (resultValue) {
                 resultValue.innerText = Math.round(critDamage);
@@ -272,7 +272,7 @@ function calculateDamage() {
         });
 }
 
-// 事件接聽設定
+// Event listener setup
 formulaInput.addEventListener('input', () => {
     updateHighlight();
     parseFormula();
@@ -280,11 +280,11 @@ formulaInput.addEventListener('input', () => {
 varianceInput.addEventListener('input', calculateDamage);
 criticalCheck.addEventListener('change', calculateDamage);
 
-// 頁面初次載入執行
+// Execute on initial page load
 updateHighlight();
 parseFormula();
 
-// 監聽語言變更事件，以便即時重新計算與更新傷害浮動區間、錯誤訊息等
+// Listen for localeChange events to recalculate damage and update UI messages in real-time
 window.addEventListener('localeChange', () => {
     calculateDamage();
 });

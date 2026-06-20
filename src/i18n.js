@@ -54,20 +54,20 @@ const i18nData = {
                 try {
                     localStorage.setItem('rmmv_analyzer_locale', locale);
                 } catch (e) {
-                    // 沙盒環境下 localStorage 可能不可用
+                    // localStorage might be unavailable in sandbox environments
                 }
                 this.updateDOM();
                 
-                // 觸發事件通知 app.js 重新計算傷害
+                // Trigger event to notify app.js to recalculate damage
                 const event = new CustomEvent('localeChange', { detail: { locale } });
                 window.dispatchEvent(event);
             }
         },
         updateDOM() {
-            // 更新 title
+            // Update title
             document.title = this.t('title');
             
-            // 更新所有帶有 data-i18n 的元素
+            // Update all elements with data-i18n attribute
             const elements = document.querySelectorAll('[data-i18n]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -77,11 +77,11 @@ const i18nData = {
         init() {
             this.updateDOM();
             
-            // 綁定下拉選單
+            // Bind dropdown selector
             const select = document.getElementById('langSelect');
             if (select) {
                 select.value = currentLocale;
-                // 防止重複綁定
+                // Prevent duplicate bindings
                 select.onchange = (e) => {
                     this.setLocale(e.target.value);
                 };
@@ -91,6 +91,6 @@ const i18nData = {
 
     window.I18n = I18n;
     
-    // 直接執行初始化，因為此腳本在 body 底部載入，DOM 已解析完成
+    // Directly execute initialization as this script is loaded at the bottom of the body, meaning the DOM is already parsed
     I18n.init();
 })();

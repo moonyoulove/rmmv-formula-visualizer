@@ -1,9 +1,9 @@
-// 模擬 RMMV 的基本變數結構與預設值
+// Simulate basic RMMV battler parameter structure and default values
 const defaultBattlerParam = {
     mhp: 1000, mmp: 100, atk: 100, def: 50, mat: 100, mdf: 50, agi: 50, luk: 50, hp: 1000, mp: 100, tp: 0, level: 1
 };
 
-// 模擬 RMMV 技能或道具的常用屬性
+// Simulate common attributes of RMMV skills or items
 const defaultItemParam = {
     mpCost: 0,
     tpCost: 0,
@@ -13,7 +13,7 @@ const defaultItemParam = {
     speed: 0
 };
 
-// Worker 執行代碼 (包含獨立沙盒環境)
+// Worker execution code (including isolated sandbox environment)
 const workerCode = `
 const defaultBattlerParam = {
     mhp: 1000, mmp: 100, atk: 100, def: 50, mat: 100, mdf: 50, agi: 50, luk: 50, hp: 1000, mp: 100, tp: 0, level: 1
@@ -84,7 +84,7 @@ function evalFormulaWithContext(formula, varContext, isCritical = false, varianc
     const a = new VirtualBattler('a', varContext);
     const b = new VirtualBattler('b', varContext);
     
-    // 使用 Proxy 來包裝 v，當讀取不存在的屬性時回傳 0，符合 RMMV 預設值
+    // Use Proxy to wrap v. When reading non-existent attributes, return 0, matching RMMV default behavior.
     const v = new Proxy({}, {
         get: (target, name) => {
             return name in target ? target[name] : 0;
@@ -125,7 +125,7 @@ function evalFormulaWithContext(formula, varContext, isCritical = false, varianc
     });
 
     try {
-        // 移除 $gameVariables 參數，改用精簡的 v
+        // Remove $gameVariables parameter, use simplified v instead
         const f = new Function('a', 'b', 'v', 'item', 'return ' + formula + ';');
         const baseResult = f(a, b, v, item);
         return isNaN(baseResult) ? 0 : Math.max(baseResult, 0);
@@ -145,7 +145,7 @@ self.onmessage = function(e) {
 };
 `;
 
-// 使用 Blob URL 初始化 Web Worker 以防止本地 CORS 安全錯誤
+// Initialize Web Worker using Blob URL to prevent local CORS security errors
 const blob = new Blob([workerCode], { type: 'application/javascript' });
 const worker = new Worker(URL.createObjectURL(blob));
 
@@ -164,7 +164,7 @@ worker.onmessage = function(e) {
     }
 };
 
-// 異步公式執行介面
+// Asynchronous formula evaluation interface
 function evalFormulaWithContextAsync(formula, varContext, isCritical = false, variance = 0) {
     return new Promise((resolve, reject) => {
         const reqId = ++currentReqId;

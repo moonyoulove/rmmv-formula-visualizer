@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="title">RPG Maker MV 傷害公式視覺化工具</title>
-    <!-- 引入現代字體 -->
+    <!-- Import modern fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Prism.js 語法高亮主題 -->
+    <!-- Prism.js Syntax Highlighting Theme -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     
-    <!-- 引入本地樣式 -->
+    <!-- Import local styles -->
     <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
@@ -28,7 +28,7 @@
         </div>
     </header>
     <main>
-    <!-- 公式輸入卡片 -->
+    <!-- Formula Config Card -->
     <div class="card">
         <h2 class="card-title" data-i18n="card_formula_config">傷害公式配置</h2>
         <div class="form-group">
@@ -55,17 +55,17 @@
         </div>
     </div>
 
-    <!-- 雙欄控制與輸出 -->
+    <!-- Two-column controls and output -->
     <div class="grid">
-        <!-- 左側：公式變數動態控制 -->
+        <!-- Left: Dynamic controls for formula variables -->
         <div class="card" style="margin-bottom: 0;">
             <h2 class="card-title" data-i18n="card_variable_control">公式變數動態控制</h2>
             <div id="dynamicControls" class="control-list">
-                <!-- 動態生成控制項 -->
+                <!-- Dynamically generated controls -->
             </div>
         </div>
 
-        <!-- 右側：預期傷害值 -->
+        <!-- Right: Expected damage output -->
         <div class="result-card">
             <h2 class="result-title" data-i18n="label_expected_damage">預期傷害值</h2>
             <div class="result-value-container" aria-live="polite">
@@ -82,11 +82,11 @@
     </footer>
 </div>
 
-<!-- 載入 Prism.js 核心與 JS 語言擴展 -->
+<!-- Load Prism.js core and JS language extensions -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 
-<!-- 載入本地腳本 -->
+<!-- Load local scripts -->
 <script src="src/i18n.js"></script>
 <script src="src/rmmv-sim.js"></script>
 <script src="src/app.js"></script>
