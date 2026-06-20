@@ -179,20 +179,20 @@ function renderControls(variables) {
             
             group.innerHTML = `
                 <div class="control-header">
-                    <span class="control-label">${v.label}</span>
+                    <label class="control-label" for="slider_${key}">${v.label}</label>
                 </div>
                 <div class="slider-row">
                     <input type="range" id="slider_${key}" min="0" max="${maxRange}" value="${v.value}">
                     <div style="display:flex; align-items:center; gap:4px;">
-                        <input type="number" id="num_${key}" class="value-box" min="0" max="${maxRange}" value="${v.value}">
+                        <input type="number" id="num_${key}" class="value-box" min="0" max="${maxRange}" value="${v.value}" aria-label="${v.label} 精確數值">
                         ${suffix ? `<span style="font-size:12px; color:var(--text-secondary); width:12px;">${suffix}</span>` : ''}
                     </div>
                 </div>
                 <div class="quick-adjust-row">
-                    <button type="button" class="btn-adjust" data-delta="-100">-100</button>
-                    <button type="button" class="btn-adjust" data-delta="-10">-10</button>
-                    <button type="button" class="btn-adjust" data-delta="10">+10</button>
-                    <button type="button" class="btn-adjust" data-delta="100">+100</button>
+                    <button type="button" class="btn-adjust" data-delta="-100" aria-label="${v.label} 減少 100">-100</button>
+                    <button type="button" class="btn-adjust" data-delta="-10" aria-label="${v.label} 減少 10">-10</button>
+                    <button type="button" class="btn-adjust" data-delta="10" aria-label="${v.label} 增加 10">+10</button>
+                    <button type="button" class="btn-adjust" data-delta="100" aria-label="${v.label} 增加 100">+100</button>
                 </div>
             `;
             dynamicControls.appendChild(group);

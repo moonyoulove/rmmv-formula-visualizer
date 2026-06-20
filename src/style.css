@@ -10,7 +10,7 @@
     
     --text-primary: #ffffff;  
     --text-secondary: #e0e0e0;
-    --text-muted: #888888;
+    --text-muted: #a0a0a0;
     
     /* RPG Maker 經典文字調色盤 */
     --color-brand: #f8d058;     /* 經典黃色字體 */
@@ -114,8 +114,7 @@ h1 {
 .card-title {
     font-size: 16px;
     font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 18px;
+    margin: 0 0 18px 0; /* 重設 margin */
     color: var(--color-brand); /* 黃色標題 */
     display: flex;
     align-items: center;
@@ -264,9 +263,10 @@ pre[class*="language-"] {
     transition: border-color 0.15s ease;
 }
 
-.config-item input[type="number"]:focus {
+.config-item input[type="number"]:focus-visible {
     border-color: var(--color-brand);
     outline: none;
+    box-shadow: 0 0 0 2px var(--color-brand);
 }
 
 /* Checkbox 樣式優化 */
@@ -278,7 +278,15 @@ pre[class*="language-"] {
 }
 
 .checkbox-container input {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .checkbox-custom {
@@ -294,6 +302,11 @@ pre[class*="language-"] {
     background-color: var(--bg-input);
     box-shadow: 0 0 0 1px #000;
     box-sizing: border-box;
+}
+
+.checkbox-container input:focus-visible + .checkbox-custom {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 2px var(--rm-border-shadow), 0 0 0 4px var(--color-brand);
 }
 
 .checkbox-container:hover .checkbox-custom {
@@ -383,6 +396,11 @@ input[type="range"] {
     -webkit-appearance: none;
 }
 
+input[type="range"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-brand);
+}
+
 input[type="range"]::-webkit-slider-runnable-track {
     height: 6px;
     background: rgba(0, 0, 0, 0.5);
@@ -422,9 +440,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
     text-shadow: 1px 1px 0 #000;
 }
 
-.value-box:focus {
+.value-box:focus-visible {
     border-color: var(--color-brand);
     outline: none;
+    box-shadow: 0 0 0 2px var(--color-brand);
 }
 
 /* 結果顯示面板 */
@@ -451,10 +470,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .result-title {
     font-size: 14px;
     font-weight: 700;
+    margin: 0 0 8px 0; /* 重設 margin */
     color: var(--color-brand);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 8px;
     text-shadow: 1px 1px 0 #000;
 }
 
@@ -535,6 +554,13 @@ input[type="range"]::-webkit-slider-thumb:hover {
     box-shadow: 0 0 0 1px #000;
 }
 
+.btn-adjust:focus-visible {
+    outline: none;
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 2px var(--color-brand);
+}
+
 .btn-adjust:hover {
     color: var(--color-brand);
     border-color: var(--color-brand);
@@ -581,8 +607,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.lang-select:focus {
+.lang-select:focus-visible {
     border-color: var(--color-brand);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-brand);
 }
 
 .lang-select option {
@@ -597,7 +625,7 @@ footer {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     text-align: center;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.55);
     font-family: 'JetBrains Mono', sans-serif;
     letter-spacing: 0.02em;
     text-shadow: 1px 1px 0 #000;
