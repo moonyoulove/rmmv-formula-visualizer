@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Maker MV 傷害公式分析儀</title>
+    <title data-i18n="title">RPG Maker MV 傷害公式視覺化工具</title>
     <!-- 引入現代字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,14 +19,20 @@
 
 <div class="container">
     <header>
-        <h1>⚔️ RMMV 傷害公式分析儀</h1>
+        <h1 data-i18n="header_title">⚔️ RMMV 傷害公式視覺化工具</h1>
+        <div class="lang-selector-container">
+            <select id="langSelect" class="lang-select">
+                <option value="zh-TW">繁體中文</option>
+                <option value="en">English</option>
+            </select>
+        </div>
     </header>
     
     <!-- 公式輸入卡片 -->
     <div class="card">
-        <div class="card-title">傷害公式配置</div>
+        <div class="card-title" data-i18n="card_formula_config">傷害公式配置</div>
         <div class="form-group">
-            <label for="formulaInput">公式 (Formula)</label>
+            <label for="formulaInput" data-i18n="label_formula">公式</label>
             <div class="editor-container">
                 <textarea id="formulaInput" class="editor-textarea" spellcheck="false">a.atk * 4 - b.def * 2</textarea>
                 <pre class="editor-highlight language-javascript"><code id="highlightArea"></code></pre>
@@ -36,7 +42,7 @@
         
         <div class="config-row">
             <div class="config-item">
-                <label style="margin-bottom:0;" for="varianceInput">變化 (Variance)</label>
+                <label style="margin-bottom:0;" for="varianceInput" data-i18n="label_variance">變化</label>
                 <input type="number" id="varianceInput" value="20" min="0" max="100">
                 <span>%</span>
             </div>
@@ -44,7 +50,7 @@
             <label class="checkbox-container config-item" style="margin-bottom:0;">
                 <input type="checkbox" id="criticalCheck">
                 <div class="checkbox-custom"></div>
-                <span>暴擊 (Critical 3.0x)</span>
+                <span data-i18n="label_critical">暴擊 (3.0x)</span>
             </label>
         </div>
     </div>
@@ -53,7 +59,7 @@
     <div class="grid">
         <!-- 左側：公式變數動態控制 -->
         <div class="card" style="margin-bottom: 0;">
-            <div class="card-title">🎛️ 公式變數動態控制</div>
+            <div class="card-title" data-i18n="card_variable_control">公式變數動態控制</div>
             <div id="dynamicControls" class="control-list">
                 <!-- 動態生成控制項 -->
             </div>
@@ -61,11 +67,11 @@
 
         <!-- 右側：預期傷害值 -->
         <div class="result-card">
-            <div class="result-title">預期傷害值</div>
+            <div class="result-title" data-i18n="label_expected_damage">預期傷害值</div>
             <div class="result-value-container">
                 <span class="result-value" id="resultValue">0</span>
             </div>
-            <div class="result-sub" id="resultRange">傷害浮動區間: 0 ~ 0</div>
+            <div class="result-sub" id="resultRange" data-i18n="label_variance_range">傷害浮動區間</div>
             <div class="next-arrow">▼</div>
         </div>
     </div>
@@ -80,6 +86,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 
 <!-- 載入本地腳本 -->
+<script src="src/i18n.js"></script>
 <script src="src/rmmv-sim.js"></script>
 <script src="src/app.js"></script>
 

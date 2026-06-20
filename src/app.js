@@ -126,7 +126,10 @@ function renderControls(variables) {
     dynamicControls.innerHTML = '';
     
     if (Object.keys(variables).length === 0) {
-        dynamicControls.innerHTML = '<p style="color: var(--text-muted); font-style:italic; font-size: 13px; text-align: center; margin: 20px 0; grid-column: span 2;">公式中未偵測到 a, b, item 的屬性、方法或 v[x] 變數。</p>';
+        const noVarsText = window.I18n
+            ? window.I18n.t('no_vars_detected')
+            : '公式中未偵測到 a, b, item 的屬性、方法或 v[x] 變數。';
+        dynamicControls.innerHTML = `<p style="color: var(--text-muted); font-style:italic; font-size: 13px; text-align: center; margin: 20px 0; grid-column: span 2;">${noVarsText}</p>`;
         return;
     }
 
@@ -253,13 +256,17 @@ function calculateDamage() {
             }
             const resultRange = document.getElementById('resultRange');
             if (resultRange) {
-                resultRange.innerText = `傷害浮動區間 (${variance}%): ${minDamage} ~ ${maxDamage}`;
+                const rangeText = window.I18n
+                    ? window.I18n.t('variance_range_text', { variance, min: minDamage, max: maxDamage })
+                    : `傷害浮動區間 (${variance}%): ${minDamage} ~ ${maxDamage}`;
+                resultRange.innerText = rangeText;
             }
         })
         .catch(err => {
             if (calcId !== latestCalcId) return;
             if (errorMsg) {
-                errorMsg.innerText = `公式語法錯誤: ${err.message}`;
+                const errorPrefix = window.I18n ? window.I18n.t('error_syntax') : '公式語法錯誤: ';
+                errorMsg.innerText = `${errorPrefix}${err.message}`;
                 errorMsg.style.display = 'block';
             }
         });
@@ -276,3 +283,8 @@ criticalCheck.addEventListener('change', calculateDamage);
 // 頁面初次載入執行
 updateHighlight();
 parseFormula();
+
+// 監聽語言變更事件，以便即時重新計算與更新傷害浮動區間、錯誤訊息等
+window.addEventListener('localeChange', () => {
+    calculateDamage();
+});
